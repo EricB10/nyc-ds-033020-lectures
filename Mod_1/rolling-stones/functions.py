@@ -3,9 +3,6 @@ import collections
 import matplotlib.pyplot as plt
 
     
-
-
-
 # Pass album name and data set, returns dict of album info.
 def find_by_album(album, data_set):
     for entry in data_set:
@@ -15,6 +12,7 @@ def find_by_album(album, data_set):
         else:
             return None
 
+        
 # Pass album name, returns dict of album info.
 def find_by_name(name, data_set):
     for album in data_set:
