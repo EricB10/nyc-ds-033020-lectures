@@ -1,56 +1,28 @@
-import csv
-import json
+
 import collections
 import matplotlib.pyplot as plt
 
     
-# Open Top Albums csv file, create list albums.
-with open('data.csv') as f:
-    albums = []
-    for row in csv.DictReader(f):
-        albums.append(row)
 
-        
-# # Open Top 500 Songs txt file, create list songs.        
-# text_file = open('top-500-songs.txt', 'r')
-# lines = text_file.readlines()
-# song_list = []
-# for line in lines:
-#     line_list = line.split('\t')
-#     song_list.append(line_list)      
-# songs = []
-# for s in song_list:
-#     song = {'rank': s[0],
-#             'name': s[1],
-#             'artist': s[2],
-#             'year': s[3][:-1],
-#                 }
-#     songs.append(song)
-
-# Open Top 500 Songs txt file, create list songs.
-text_file = open('top-500-songs.txt', 'r')
-lines = text_file.readlines()
-song_list = []
-songs = []
-for line in lines:
-    song_list.append(line.split('\t'))
-for song in song_list:
-    songs.append({'rank': song[0], 'name': song[1], 'artist': song[2], 'year': song[3][:-1]})
-
-
-# Open Top 500 Songs json file, create list songs_data.
-file = open('track_data.json', 'r')
-songs_data = json.load(file)
 
 
 # Pass album name and data set, returns dict of album info.
-def find_by_album(name, data_set):
+def find_by_album(album, data_set):
     for entry in data_set:
-        if entry['album'].lower() == name.lower():
+        print(entry)
+        if entry['album'].lower() == album.lower():
             return entry
         else:
             return None
 
+# Pass album name, returns dict of album info.
+def find_by_name(name, data_set):
+    for album in data_set:
+        if album['album'].lower() == name.lower():
+            return album
+        else:
+            return None
+        
 
 # Pass album rank and data set, returns album name, rank.
 def find_by_rank(rank, data_set):
@@ -110,8 +82,6 @@ def all_songs(data_set):
     for entry in data_set:
         result.append(entry['name'])
     return result
-# Set variable for easy use.
-top_500 = all_songs(songs)
 
 
 # Pass data set, returns artist with the most albums on Top Albums list.
@@ -181,38 +151,36 @@ def album_w_most_songs():
 # Returns list of albums with at least one song in Top 500 Songs list.
 def albums_w_top_songs():
     result = []
-    for album in songs_data:
+    for entry in songs_data:
         track_list = []
         for song in album['tracks']:
             track_list.append(song)
             for track in track_list:
-                if track in all_songs(songs):
-                    result.append(album['album'])
+                if track in top_500:
+                    result.append(entry['album'])
     return list(set(result))
-albums_w_top_songs()
 
 
 # Returns list of songs in the Top Albums list.
 def songs_in_top_albums():
     result = []
-    for album in songs_data:
-        if album['album'] in all_albums(albums):
-            for song in album['tracks']:
+    for entry in songs_data:
+        if entry['album'] in all_albums(albums):
+            for song in entry['tracks']:
                 result.append(song)
     return result
-songs_in_top_albums()
 
 
 # Returns histogram of (top 10 albums by number of songs in Top 500 Songs list, corresponding number).
 def top_albums_hist():
     sample = []
-    for album in songs_data:
+    for entry in songs_data:
         track_list = []
-        for song in album['tracks']:
+        for song in entry['tracks']:
             track_list.append(song)
             for track in track_list:
-                if track in all_songs(songs):
-                    sample.append(album['album'])
+                if track in top_500:
+                    sample.append(entry['album'])
     counter = collections.Counter(sample)
     c = counter.most_common(10)
     numbers = []
@@ -231,18 +199,18 @@ def top_albums_hist():
 def top_overall_artist():
     sample = {}
     i = 0
-    for artist in all_artists(albums):
-        sample[artist] = i
-    for album in songs_data:
-        if album['album'] in all_albums(albums):
-            sample[album['artist']] += 1
-    for song in songs:
-        if song['artist'] not in sample.keys():
-            sample[song['artist']] = i + 1
-        sample[song['artist']] += 1
+    for entry in all_artists(albums):
+        sample[entry] = i
+    for entry in songs_data:
+        if entry['album'] in all_albums(albums):
+            sample[entry['artist']] += 1
+    for entry in songs:
+        if entry['artist'] not in sample.keys():
+            sample[entry['artist']] = i + 1
+        sample[entry['artist']] += 1
     top = max(sample.values())
-    for artist in sample:
-        if sample[artist] == top:
-            return artist, top
+    for entry in sample:
+        if sample[entry] == top:
+            return entry, top
 top_overall_artist()
 
