@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# swap file error
+*.swp
+*.swo
+
 # C extensions
 *.so
 
