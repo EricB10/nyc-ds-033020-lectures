@@ -3,7 +3,6 @@ import pandas as pd
 
 import requests
 import json
-import os.path
 
 from  keys  import  client_id, api_key
 
